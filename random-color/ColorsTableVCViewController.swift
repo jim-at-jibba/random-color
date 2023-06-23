@@ -8,31 +8,58 @@
 import UIKit
 
 class ColorsTableVCViewController: UIViewController {
+    
+    var colors: [UIColor] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        createRandomColors()
+    }
+   
+    func createRandomColors() {
+        for _ in 0..<50 {
+            colors.append(createRandomColor())
+        }
     }
     
+    func createRandomColor() -> UIColor {
+        let randomColor = UIColor(red: CGFloat.random(in: 0...1),
+                                  green: CGFloat.random(in: 0...1),
+                                  blue: CGFloat.random(in: 0...1),
+                                  alpha: 1)
+        return randomColor
+    }
 
-    
-
-
+    // this is triggered by the prepareSegue below
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // This cast it to our ColorsDetailVC so that we now know that
+        // we have a color property
+        let destVC = segue.destination as! ColorsDetailVC
+        destVC.color = sender as? UIColor
+    }
 }
 
 // extending is the same as having them above its just a bit cleaner
 // Now all the tableView code is separate and cleaner
 extension ColorsTableVCViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 50
+        return colors.count
     }
    
     // delegate is a function that waits for an action. When that action happens this delegate function runs
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ColorCell") else {
+            return UITableViewCell()
+        }
+        
+        let color = colors[indexPath.row]
+        cell.backgroundColor = color
+        return cell
     }
    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "ToColorsDetailsVC", sender: nil)
+        let color = colors[indexPath.row]
+        performSegue(withIdentifier: "ToColorsDetailsVC", sender: color)
     }
 }
