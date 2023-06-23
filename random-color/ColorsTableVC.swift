@@ -11,6 +11,14 @@ class ColorsTableVCViewController: UIViewController {
     
     var colors: [UIColor] = []
     
+    enum Cells {
+        static let colorCell = "ColorCell"
+    }
+    
+    enum Segues {
+        static let toDetails = "ToColorsDetailsVC"
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         createRandomColors()
@@ -18,18 +26,12 @@ class ColorsTableVCViewController: UIViewController {
    
     func createRandomColors() {
         for _ in 0..<50 {
-            colors.append(createRandomColor())
+            // .random() is the same as UIColor.random()
+            colors.append(.random())
         }
     }
     
-    func createRandomColor() -> UIColor {
-        let randomColor = UIColor(red: CGFloat.random(in: 0...1),
-                                  green: CGFloat.random(in: 0...1),
-                                  blue: CGFloat.random(in: 0...1),
-                                  alpha: 1)
-        return randomColor
-    }
-
+    
     // this is triggered by the prepareSegue below
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // This cast it to our ColorsDetailVC so that we now know that
@@ -49,7 +51,7 @@ extension ColorsTableVCViewController: UITableViewDelegate, UITableViewDataSourc
     // delegate is a function that waits for an action. When that action happens this delegate function runs
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ColorCell") else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: Cells.colorCell) else {
             return UITableViewCell()
         }
         
@@ -60,6 +62,6 @@ extension ColorsTableVCViewController: UITableViewDelegate, UITableViewDataSourc
    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let color = colors[indexPath.row]
-        performSegue(withIdentifier: "ToColorsDetailsVC", sender: color)
+        performSegue(withIdentifier: Segues.toDetails, sender: color)
     }
 }
